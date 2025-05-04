@@ -1,0 +1,158 @@
+.chart{
+    background-color: rgb(29, 5, 62);
+    width: 500px;
+    height: 400px;
+    position: relative;
+    left: 750px;
+    bottom: 50px;
+    animation: blurry 1.5s linear forwards;
+
+
+}
+body{
+    background-image: url(grpBack.svg);
+    background-size: cover;
+}
+.writing{
+    display: inline-block;
+    width: 500px;
+    position: relative;
+    left: 250px;
+    top: 150px;
+    color: aliceblue;
+    
+    
+}
+.trends{
+    white-space: nowrap;
+    
+    font-size: 120px;
+    position: relative;
+    right: 50px;
+    overflow: hidden;
+    
+    animation: OpeningSequence 1s linear forwards,FadeIn 1s linear  forwards;
+}
+.past{
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    left: 30px;
+    opacity: 0;
+    white-space: nowrap;
+    
+    animation: OpeningSequence 1.5s linear forwards,FadeIn 1.5s linear  forwards;
+    animation-delay: 1s;
+}
+.buttons{
+    position: relative;
+    left: 350px;
+    bottom: 200px;
+    animation: blurry 1.5s linear forwards;
+}
+.inp{
+    margin-top: 10px;
+    width: 380px;
+    transform: translateY(-60px);
+    opacity: 0;
+    z-index: -1;
+}
+.entry{
+    animation:enter 0.3s ease-out forwards;
+}
+p{
+    width: 200px;
+    height: 30px;
+    position: relative;
+    bottom: 5px;
+    left: 80px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+}
+.pp{
+    
+    font-size: larger;
+    position: relative;
+    bottom: 5px;
+    left: 70px;
+    color: rgb(255, 255, 255);
+    
+}
+.out{
+    opacity: 0;
+}
+.in{
+    opacity: 1;
+}
+
+@keyframes enter{
+    0%{
+        opacity: 0.2;
+    
+    }
+    50%{
+        opacity: 0.5;
+        transform: translateY(10px);
+    }
+    100%{
+        opacity: 1;
+        transform: translateY(10px);
+        z-index: 1;
+    }
+}
+@keyframes blurry{
+    0% {
+        opacity: 0.2;
+        filter: blur(10px);
+    }
+    50%{
+        opacity: 0.5;
+    filter: blur(5px);
+    }
+    100%{
+        opacity: 1;
+        filter: blur(0px);
+    }
+
+}
+
+  
+  /* Keyframes */
+  @keyframes OpeningSequence {
+    0% {
+        filter: blur(10px);
+      text-shadow: 0 0 50px #fff;
+      letter-spacing: 80px;
+      opacity: 0.2;
+      transform: rotateY(-90deg);
+    }
+    50% {
+        filter: blur(6px);
+      text-shadow: 0 0 1px #fff;
+      letter-spacing: 14px;
+      opacity: 0.8;
+      transform: rotateY(0deg);
+    }
+    85% {
+        filter: blur(4px);
+      text-shadow: 0 0 1px #fff;
+      opacity: 0.8;
+      transform: rotateY(0deg) translateZ(100px);
+    }
+    100% {
+      text-shadow: 0 0 10px #fff;
+      opacity: 1;
+      transform: translateZ(130px);
+      pointer-events: none;
+    }
+  }
+  @keyframes FadeIn { 
+    0% {
+      opacity: 0;
+      text-shadow: 0 0 50px #fff;
+    }
+    100% {
+      opacity: 0.8;
+      text-shadow: 0 0 1px #fff;
+    }
+  }
