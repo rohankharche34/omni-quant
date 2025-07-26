@@ -10,7 +10,7 @@
 
 }
 body{
-    background-image: url(grpBack.svg);
+    background-image: url(/assets/grpBack.svg);
     background-size: cover;
 }
 .writing{

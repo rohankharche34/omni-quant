@@ -1,6 +1,6 @@
 let btn=document.querySelector("#graph-btn");
 function siteChange(){
-    window.location.href="graph.html";
+    window.location.href="/graph.html";
 }
 btn.addEventListener("click",siteChange);
 
