@@ -11,3 +11,11 @@ pmdarima
 arch
 yfinance
 gunicorn
+ta
+scikit-learn
+xgboost
+lightgbm
+tensorflow
+mlflow
+shap
+flower

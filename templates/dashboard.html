@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni-Quant Model Dashboard</title>
+    <link rel="stylesheet" href="/static/styles/style.css">
+    <style>
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: var(--surface-light);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        td {
+            color: var(--text-secondary);
+        }
+        .metric-good {
+            color: #4ade80;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Model Comparison Dashboard</h1>
+        <p>Walk-Forward Validation Metrics (Loaded via /api/metrics)</p>
+        
+        <table id="metrics-table">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>RMSE (Lower is better)</th>
+                    <th>MAE (Lower is better)</th>
+                    <th>MAPE (%)</th>
+                    <th>Directional Accuracy (%)</th>
+                    <th>Sharpe Ratio (Simulated)</th>
+                </tr>
+            </thead>
+            <tbody id="metrics-body">
+                <tr><td colspan="6">Loading latest experiment metrics... (Requires running a forecast first)</td></tr>
+            </tbody>
+        </table>
+        
+        <div style="margin-top: 40px;">
+            <a href="/" style="color: var(--primary);">← Back to Forecaster</a>
+        </div>
+    </div>
+
+    <script>
+        async function loadMetrics() {
+            try {
+                const response = await fetch('/api/metrics');
+                const data = await response.json();
+                
+                const tbody = document.getElementById('metrics-body');
+                
+                if (data.message) {
+                    tbody.innerHTML = `<tr><td colspan="6">${data.message}</td></tr>`;
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                
+                // data contains "xgboost", "lightgbm", "lstm" keys with dicts of metrics
+                for (const [modelName, metrics] of Object.entries(data)) {
+                    if (modelName === "arima_aic" || modelName === "garch_aic") continue;
+                    
+                    const tr = document.createElement('tr');
+                    
+                    const nameTd = document.createElement('td');
+                    nameTd.textContent = modelName.toUpperCase();
+                    nameTd.style.fontWeight = "bold";
+                    nameTd.style.color = "var(--text-primary)";
+                    tr.appendChild(nameTd);
+                    
+                    const rmseTd = document.createElement('td');
+                    rmseTd.textContent = metrics.rmse.toFixed(2);
+                    tr.appendChild(rmseTd);
+                    
+                    const maeTd = document.createElement('td');
+                    maeTd.textContent = metrics.mae.toFixed(2);
+                    tr.appendChild(maeTd);
+                    
+                    const mapeTd = document.createElement('td');
+                    mapeTd.textContent = (metrics.mape * 100).toFixed(2) + '%';
+                    tr.appendChild(mapeTd);
+                    
+                    const daTd = document.createElement('td');
+                    const daVal = (metrics.directional_accuracy * 100).toFixed(2);
+                    daTd.textContent = daVal + '%';
+                    if (metrics.directional_accuracy > 0.5) daTd.className = 'metric-good';
+                    tr.appendChild(daTd);
+                    
+                    const sharpeTd = document.createElement('td');
+                    sharpeTd.textContent = metrics.sharpe_ratio.toFixed(2);
+                    if (metrics.sharpe_ratio > 1.0) sharpeTd.className = 'metric-good';
+                    tr.appendChild(sharpeTd);
+                    
+                    tbody.appendChild(tr);
+                }
+            } catch (error) {
+                console.error("Error loading metrics:", error);
+            }
+        }
+        
+        loadMetrics();
+    </script>
+</body>
+</html>

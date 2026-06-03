@@ -1,99 +1,53 @@
-# Omni-Quant 🧠 📈
+# Omni-Quant Advanced MLOps Platform
 
-**Omni-Quant** is a professional, high-performance cryptocurrency forecasting platform built for speed and precision. 
-By combining a distributed asynchronous architecture (Flask + Celery + Redis) with mathematically rigorous statistical models (Auto-ARIMA and GARCH), Omni-Quant is Designed for robust short-term forecasting and volatility estimation using statistical time-series methods for major cryptocurrencies.
+Omni-Quant is a production-grade, end-to-end Machine Learning Operations (MLOps) platform designed to forecast cryptocurrency prices and volatility using state-of-the-art algorithms and strict statistical backtesting.
 
-This project was specifically designed to balance complex research methodologies with robust, production-ready software engineering principles, serving as a powerful resume piece.
+## Architecture Highlights
 
-## 🌟 Key Features
+- **Multiple Models:** Object-oriented implementations of XGBoost, LightGBM, LSTM (TensorFlow/Keras), and Auto-ARIMA.
+- **Feature Engineering Pipeline:** 15+ domain-specific statistical features engineered dynamically using Pandas and the `ta` library (RSI, MACD, Bollinger Bands, Moving Averages, Volatility, Log Returns).
+- **Walk-Forward Validation Engine:** A strict backtesting engine evaluating models across a sliding time-series window, computing industry-standard metrics: RMSE, MAE, MAPE, Directional Accuracy, and Simulated Sharpe Ratio.
+- **Experiment Tracking (MLflow):** Fully automated parameter logging, metric tracking, and model artifact registry powered by a local MLflow tracking server backed by PostgreSQL.
+- **Explainability (SHAP):** Native integration with SHAP (SHapley Additive exPlanations) to dynamically generate and log feature importance charts for all tree-based boosting models.
+- **Asynchronous Orchestration:** High-performance task offloading using Celery and Redis to train and backtest heavy ML pipelines without blocking the REST API.
+- **RESTful API:** Exposes endpoints for training (`/api/train`), forecasting (`/api/forecast`), model registry querying (`/api/models`), and retrieving backtest metrics (`/api/metrics`).
 
-- **Blazing Fast Statistical Models**: Powered by `pmdarima` for automated ARIMA (Auto-Regressive Integrated Moving Average) modeling, instantly identifying the optimal parameters for time-series forecasting.
-- **Asynchronous Architecture**: Employs `Celery` workers and a `Redis` message broker to offload heavy mathematical computations, ensuring the frontend remains completely non-blocking and highly responsive.
-- **Native HTML5 Canvas Graph**: Features a completely custom, dependency-free `<canvas>` rendering engine that draws beautiful, neon-glowing charts without relying on unreliable 3rd-party CDN libraries (like TradingView or Chart.js).
-- **Multi-Cryptocurrency Support**: Seamlessly analyzes historical data and generates predictions for Bitcoin, Ethereum, Solana, Dogecoin, and Binance Coin via the real-time CoinGecko API.
-- **Ultra-Lightweight Dockerization**: The entire distributed architecture (Web Server, Celery Workers, and Redis) is heavily optimized and containerized using Docker Compose, booting from scratch in under 2 minutes.
+## Technology Stack
 
----
+- **Data Pipeline:** Pandas, NumPy, TA (Technical Analysis), CoinGecko API
+- **Machine Learning:** XGBoost, LightGBM, TensorFlow/Keras (LSTM), Scikit-Learn, Statsmodels (ARIMA/GARCH)
+- **MLOps & Explainability:** MLflow, SHAP
+- **Web & API:** Flask, Gunicorn
+- **Orchestration:** Celery, Redis
+- **Database:** PostgreSQL (SQLAlchemy ORM)
+- **Containerization:** Docker, Docker Compose
 
-## 🏗️ Technical Architecture
+## Quickstart (Local Infrastructure)
 
-1. **Frontend**: HTML5, Vanilla CSS (Glassmorphism design), Vanilla JS, Custom Native Canvas API.
-2. **Backend**: Python, Flask, SQLAlchemy.
-3. **Task Queue**: Celery.
-4. **Message Broker**: Redis (Alpine Container).
-5. **Machine Learning / Statistics**: `pmdarima` (Auto-ARIMA), `arch` (GARCH Volatility), `pandas`, `statsmodels`.
-6. **Database (Data Pipeline)**: PostgreSQL / Supabase for historical prices, model versions, experiment tracking, and predictions.
+Because this platform utilizes heavy-duty ML libraries and data pipelines, it is configured to run entirely via Docker Compose.
 
----
+1. Clone the repository and navigate into the directory.
+2. Start the entire MLOps stack (Postgres, Redis, MLflow Server, Web Server, Celery Worker):
+   ```bash
+   docker-compose up --build
+   ```
 
-## 🚀 Quick Start (Docker)
+### Accessing the Platform
+- **Main Interface:** `http://localhost:5000`
+- **Model Comparison Dashboard:** `http://localhost:5000/dashboard`
+- **MLflow Tracking Server:** `http://localhost:5001` (View logged parameters, artifacts, and SHAP plots here!)
 
-The absolute best way to run Omni-Quant is using Docker. The environment is heavily optimized, and thanks to a strict `.dockerignore`, the image size is incredibly lightweight (~300MB).
+## The MLOps Pipeline Flow
 
-### Prerequisites
-- [Docker](https://docs.docker.com/get-docker/) installed and running.
-- [Docker Compose](https://docs.docker.com/compose/install/) installed.
+1. **Trigger:** A request hits `/api/forecast` via the UI.
+2. **Task Queue:** Flask immediately returns a `202 Accepted` and offloads the heavy pipeline to the Celery worker via Redis.
+3. **Data & Features:** The worker fetches the last 120 days of market data and passes it through `features.py` to engineer 15 advanced momentum and volatility indicators.
+4. **Backtesting & Tracking:** 
+   - Each model (XGBoost, LightGBM, LSTM) is instantiated.
+   - The Walk-Forward Validation engine tests the model historically, returning strict error metrics.
+   - The `experiment_tracking.py` wrapper logs the hyperparameters, metrics, and SHAP feature importance plots to the MLflow server.
+5. **Final Forecast:** The models are fit on the full dataset to predict tomorrow's price, and the results are returned to the API.
 
-### Run the System
-Navigate to the root directory of the project and run:
+## Explainability
 
-```bash
-docker compose build
-docker compose up -d
-```
-
-That's it! Docker will automatically pull the Redis Alpine image, build the Python Web and Worker containers, and link them on an internal network.
-- The web app will be available at: **http://localhost:5000**
-- You can monitor the backend workers by running: `docker compose logs -f worker`
-
----
-
-## 💻 Local Development (Without Docker)
-
-If you prefer to run the system directly on your host machine for development or debugging, follow these steps:
-
-### 1. Start Redis
-You must have a Redis server running locally. The easiest way is via Docker:
-```bash
-docker run -d -p 6379:6379 redis:alpine
-```
-
-### 2. Set Up Virtual Environment
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 3. Start the Celery Worker
-In one terminal (with the virtual environment activated), start the background worker:
-```bash
-python -m celery -A celery_app.celery worker --loglevel=info
-```
-
-### 4. Start the Flask Server
-In a separate terminal (with the virtual environment activated), start the web application:
-```bash
-python app.py
-```
-The site will be running at `http://127.0.0.1:5000`.
-
----
-
-## 📊 How the Forecasting Works
-
-Omni-Quant uses the **Auto-ARIMA** algorithm to predict future cryptocurrency prices.
-Unlike standard Machine Learning models (like LSTMs) which require massive datasets and long training times (often resulting in overfitting on noisy financial data), ARIMA is a classic statistical model that analyzes the *autocorrelation* in the time series.
-
-When a user clicks "Forecast", the following occurs:
-1. The frontend polls the backend and initiates an asynchronous **Celery task**.
-2. The Celery worker fetches the last 90 days of closing prices from the CoinGecko API and **bulk-inserts** the raw data into the **PostgreSQL (Supabase)** database.
-3. A feature pipeline queries the database to construct the training dataset.
-4. The Auto-ARIMA algorithm performs a grid-search (minimizing the AIC score) to find the absolute best `(p, d, q)` parameters. GARCH models the volatility.
-5. Model versions, experiment metadata (like execution time and AIC scores), and the final prediction are logged back to the PostgreSQL database for tracking.
-6. The frontend safely polls the task ID until the worker marks it as `SUCCESS`, seamlessly updating the UI with the final result.
-
----
-
-## 🛡️ License
-This project is licensed under the MIT License.
+Understanding *why* a model made a decision is critical. When the XGBoost and LightGBM models finish training, the pipeline automatically passes them into a `shap.TreeExplainer`. This generates a Feature Importance bar chart, illustrating exactly which engineered features (e.g., MACD vs RSI) drove the predictions. These plots are automatically saved as artifacts in the MLflow tracking server.
