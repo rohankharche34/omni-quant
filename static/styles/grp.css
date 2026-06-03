@@ -1,0 +1,64 @@
+/* Extends style.css */
+
+.glass-container.large {
+    max-width: 900px;
+    width: 95%;
+}
+
+.back-btn {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+    color: var(--text-main);
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+}
+
+.hero.left-align {
+    text-align: left;
+}
+
+.graph-selector select {
+    width: auto;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin-top: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 1rem;
+    border: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader {
+    position: absolute;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.loader.hidden {
+    display: none;
+}
+
+.mt-4 { margin-top: 1rem; }

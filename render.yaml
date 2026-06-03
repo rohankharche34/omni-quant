@@ -1,0 +1,46 @@
+services:
+  # 1. Redis Broker
+  - type: redis
+    name: omniquant-redis
+    ipAllowList: [] # internal only
+    plan: free
+
+  # 2. Flask Web Server
+  - type: web
+    name: omniquant-web
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: omniquant-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: omniquant-redis
+          property: connectionString
+      - key: DATABASE_URL
+        value: sqlite:///omniquant.db
+
+  # 3. Celery Background Worker
+  - type: worker
+    name: omniquant-worker
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "python -m celery -A celery_app.celery worker --loglevel=info"
+    envVars:
+      - key: CELERY_BROKER_URL
+        fromService:
+          type: redis
+          name: omniquant-redis
+          property: connectionString
+      - key: CELERY_RESULT_BACKEND
+        fromService:
+          type: redis
+          name: omniquant-redis
+          property: connectionString
+      - key: DATABASE_URL
+        value: sqlite:///omniquant.db

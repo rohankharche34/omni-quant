@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni-Quant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/style.css">
+    <link rel="stylesheet" href="/static/styles/grp.css">
+</head>
+<body>
+    <div class="background-anim"></div>
+    
+    <div class="glass-container large">
+        <button class="back-btn" onclick="window.location.href='/'">← Back</button>
+        
+        <div class="header-flex">
+            <div class="hero left-align">
+                <h1 class="title">Market <span class="highlight">Trends</span></h1>
+                <p class="subtitle">Live 30 Days Performance</p>
+            </div>
+            
+            <div class="coin-selector graph-selector">
+                <select id="coin-select" class="glass-select">
+                    <option value="bitcoin">Bitcoin (BTC)</option>
+                    <option value="ethereum">Ethereum (ETH)</option>
+                    <option value="solana">Solana (SOL)</option>
+                    <option value="dogecoin">Dogecoin (DOGE)</option>
+                    <option value="binancecoin">Binance Coin (BNB)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+            <div id="chart-loader" class="loader">Loading...</div>
+        </div>
+
+        <div class="action-buttons mt-4">
+            <button class="glass-btn primary predict-toggle">Get Future Prediction</button>
+        </div>
+
+        <div id="prediction-panel" class="panel hidden">
+            <div class="input-group">
+                <input type="number" id="val" class="glass-input" placeholder="Days ahead (e.g. 7)" min="1">
+                <button id="submit-btn" class="glass-btn submit-btn">Forecast</button>
+            </div>
+            
+            <div id="result-container" class="result-box hidden">
+                <p class="result-label">Predicted Price</p>
+                <h2 id="output" class="price-display">$<span id="price-value">0.00</span></h2>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/scripts/grp.js"></script>
+</body>
+</html>

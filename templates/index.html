@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Omni-Quant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles/style.css">
+</head>
+<body>
+    <div class="background-anim"></div>
+    
+    <div class="glass-container">
+        <div class="hero">
+            <h1 class="title">Forecast <br/><span class="highlight">Live Crypto Prices</span></h1>
+            <p class="subtitle">Adaptive Real-Time Machine Learning Prediction</p>
+        </div>
+        
+        <div class="coin-selector">
+            <label for="coin-select">Select Asset:</label>
+            <select id="coin-select" class="glass-select">
+                <option value="bitcoin">Bitcoin (BTC)</option>
+                <option value="ethereum">Ethereum (ETH)</option>
+                <option value="solana">Solana (SOL)</option>
+                <option value="dogecoin">Dogecoin (DOGE)</option>
+                <option value="binancecoin">Binance Coin (BNB)</option>
+            </select>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="predict-btn" class="glass-btn primary">Get Prediction</button>
+            <button id="graph-btn" class="glass-btn secondary">View Trends</button>
+        </div>
+
+        <div id="prediction-panel" class="panel hidden">
+            <div class="input-group">
+                <input type="number" id="val" class="glass-input" placeholder="Days ahead (e.g. 7)" min="1">
+                <button id="submit-btn" class="glass-btn submit-btn">Forecast</button>
+            </div>
+            
+            <div id="result-container" class="result-box hidden">
+                <p class="result-label">Predicted Price</p>
+                <h2 id="output" class="price-display">$<span id="price-value">0.00</span></h2>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/scripts/index.js"></script>
+</body>
+</html>

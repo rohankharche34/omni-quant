@@ -1,0 +1,13 @@
+flask
+pandas
+numpy
+statsmodels
+requests
+sqlalchemy
+psycopg2-binary
+celery
+redis
+pmdarima
+arch
+yfinance
+gunicorn
