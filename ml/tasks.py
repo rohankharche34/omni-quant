@@ -13,7 +13,7 @@ def compute_predictions(coin_id, interval):
     db = SessionLocal()
     try:
         # 1. Fetch data
-        market_info = get_crypto_data(coin_id, days=90)
+        market_info = get_crypto_data(coin_id, days=45)
         if not market_info or 'prices' not in market_info:
             return {"error": "Could not fetch data for prediction"}
         
@@ -34,10 +34,10 @@ def compute_predictions(coin_id, interval):
             db.commit()
             
         # 3. Query prices from DB for feature pipeline
-        ninety_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=90)
-        db_prices = db.query(Price).filter(Price.coin_id == coin_id, Price.timestamp >= ninety_days_ago).order_by(Price.timestamp.asc()).all()
+        forty_five_days_ago = datetime.datetime.utcnow() - datetime.timedelta(days=45)
+        db_prices = db.query(Price).filter(Price.coin_id == coin_id, Price.timestamp >= forty_five_days_ago).order_by(Price.timestamp.asc()).all()
         
-        if len(db_prices) < 30:
+        if len(db_prices) < 20:
              return {"error": "Not enough historical data in DB to train models."}
              
         prices_list = [p.price for p in db_prices]

@@ -7,7 +7,7 @@ def predict_with_auto_arima(prices, interval):
     Trains an Auto-ARIMA model on the fly, dynamically finding the best p,d,q.
     Returns the prediction and the 95% confidence intervals.
     """
-    if not prices or len(prices) < 30:
+    if not prices or len(prices) < 20:
         raise ValueError("Not enough historical data to train Auto-ARIMA model.")
         
     with warnings.catch_warnings():
@@ -17,7 +17,7 @@ def predict_with_auto_arima(prices, interval):
         model = pm.auto_arima(
             prices, 
             start_p=1, start_q=1,
-            max_p=2, max_q=2, m=1, # No seasonality for speed
+            max_p=1, max_q=1, max_order=2, m=1, # No seasonality for speed, strictly bounded memory
             start_P=0, seasonal=False,
             d=1, D=None, trace=False,
             error_action='ignore',  
@@ -48,7 +48,7 @@ def predict_volatility(prices, interval):
     """
     Models the volatility (risk) using GARCH(1,1).
     """
-    if len(prices) < 30:
+    if len(prices) < 20:
         return 0.0
         
     with warnings.catch_warnings():
