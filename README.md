@@ -22,6 +22,7 @@ This project was specifically designed to balance complex research methodologies
 3. **Task Queue**: Celery.
 4. **Message Broker**: Redis (Alpine Container).
 5. **Machine Learning / Statistics**: `pmdarima` (Auto-ARIMA), `arch` (GARCH Volatility), `pandas`, `statsmodels`.
+6. **Database (Data Pipeline)**: PostgreSQL / Supabase for historical prices, model versions, experiment tracking, and predictions.
 
 ---
 
@@ -86,10 +87,11 @@ Unlike standard Machine Learning models (like LSTMs) which require massive datas
 
 When a user clicks "Forecast", the following occurs:
 1. The frontend polls the backend and initiates an asynchronous **Celery task**.
-2. The Celery worker fetches the last 90 days of closing prices from the CoinGecko API.
-3. The Auto-ARIMA algorithm performs a grid-search (minimizing the Akaike Information Criterion / AIC score) to find the absolute best `(p, d, q)` parameters for the specific coin's current market behavior.
-4. The model fits the data and generates a prediction for the requested number of future days.
-5. The frontend safely polls the task ID until the worker marks it as `SUCCESS`, seamlessly updating the UI with the final result.
+2. The Celery worker fetches the last 90 days of closing prices from the CoinGecko API and **bulk-inserts** the raw data into the **PostgreSQL (Supabase)** database.
+3. A feature pipeline queries the database to construct the training dataset.
+4. The Auto-ARIMA algorithm performs a grid-search (minimizing the AIC score) to find the absolute best `(p, d, q)` parameters. GARCH models the volatility.
+5. Model versions, experiment metadata (like execution time and AIC scores), and the final prediction are logged back to the PostgreSQL database for tracking.
+6. The frontend safely polls the task ID until the worker marks it as `SUCCESS`, seamlessly updating the UI with the final result.
 
 ---
 

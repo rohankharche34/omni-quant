@@ -32,10 +32,16 @@ def predict_with_auto_arima(prices, interval):
         lower_bound = conf_int[-1][0]
         upper_bound = conf_int[-1][1]
         
+        # Extract model metadata
+        order = model.order
+        aic = model.aic()
+        
         return {
             "prediction": float(final_prediction),
             "lower_bound": float(lower_bound),
-            "upper_bound": float(upper_bound)
+            "upper_bound": float(upper_bound),
+            "parameters": {"p": order[0], "d": order[1], "q": order[2]},
+            "metrics": {"aic": float(aic)}
         }
 
 def predict_volatility(prices, interval):
@@ -58,6 +64,10 @@ def predict_volatility(prices, interval):
         # Forecast variance
         forecasts = res.forecast(horizon=interval)
         variance = forecasts.variance.values[-1, -1]
+        volatility = float(variance ** 0.5)
         
-        # Return expected standard deviation (volatility)
-        return float(variance ** 0.5)
+        return {
+            "volatility": volatility,
+            "parameters": {"p": 1, "q": 1},
+            "metrics": {"aic": float(res.aic)}
+        }
